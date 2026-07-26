@@ -57,7 +57,7 @@ export default function SuccessPage() {
           <a
             className="btn"
             style={{ background: '#25D366', color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 15 }}
-            href={`https://wa.me/?text=${fullShareText}`}
+            href={`https://api.whatsapp.com/send?text=${fullShareText}`}
             target="_blank"
             rel="noreferrer"
           >
