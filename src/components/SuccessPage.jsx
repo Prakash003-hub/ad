@@ -16,7 +16,7 @@ export default function SuccessPage() {
 
 👉 *இப்போதே பதிவு செய்யுங்கள்:*`
 
-  const shareUrl = 'https://shortlinkjd.vercel.app/s/micronotes'
+  const shareUrl = 'https://micronotesoffer.vercel.app/'
   const fullShareText = encodeURIComponent(`${shareMessage}\n${shareUrl}`)
 
   return (
