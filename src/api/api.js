@@ -13,9 +13,8 @@ async function callApi(action, payload = {}, method = 'POST') {
     )
   }
 
-  // Apps Script Web Apps only reliably support GET/POST with no custom
-  // headers (to avoid CORS preflight), so everything is sent as POST
-  // with a JSON string body and the action embedded in the payload.
+  // To prevent CORS OPTIONS preflights (which Google Apps Script rejects with 405),
+  // send as a simple POST request with text/plain content type.
   const res = await fetch(BASE_URL, {
     method: 'POST',
     body: JSON.stringify({ action, ...payload }),
@@ -25,6 +24,11 @@ async function callApi(action, payload = {}, method = 'POST') {
   })
 
   if (!res.ok) {
+    if (res.status === 405) {
+      throw new Error(
+        '405 Method Not Allowed: In Google Apps Script, click "Deploy" > "Manage deployments" > Edit (pencil icon) > Version: "New version" > "Deploy".'
+      )
+    }
     throw new Error(`Request failed with status ${res.status}`)
   }
 
