@@ -1,9 +1,50 @@
+import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+
+function playSuccessChime() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+
+    // 4-note ascending major chord: C5 -> E5 -> G5 -> C6
+    const notes = [
+      { freq: 523.25, time: 0, dur: 0.18 },
+      { freq: 659.25, time: 0.10, dur: 0.18 },
+      { freq: 783.99, time: 0.20, dur: 0.22 },
+      { freq: 1046.50, time: 0.32, dur: 0.65 }
+    ]
+
+    notes.forEach(({ freq, time, dur }) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + time)
+
+      gain.gain.setValueAtTime(0.001, ctx.currentTime + time)
+      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + time + 0.03)
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + time + dur)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+
+      osc.start(ctx.currentTime + time)
+      osc.stop(ctx.currentTime + time + dur)
+    })
+  } catch (e) {
+    // Ignore audio context block if restricted by browser autoplay policies
+  }
+}
 
 export default function SuccessPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const registrationId = location.state?.registrationId
+
+  useEffect(() => {
+    playSuccessChime()
+  }, [])
 
   const shareMessage =
 `🎉 *மைக்ரோ நோட்ஸ் திறப்பு விழா சிறப்பு சலுகை!*
@@ -38,10 +79,33 @@ export default function SuccessPage() {
         </p>
 
         {registrationId && (
-          <p style={{ fontSize: 14, color: 'var(--sky-600)', fontWeight: 800, marginBottom: 16, background: 'var(--sky-100)', padding: '8px 16px', borderRadius: 999, display: 'inline-block' }}>
+          <p style={{ fontSize: 14, color: 'var(--sky-600)', fontWeight: 800, marginBottom: 12, background: 'var(--sky-100)', padding: '8px 16px', borderRadius: 999, display: 'inline-block' }}>
             பதிவு எண் (Registration ID): {registrationId}
           </p>
         )}
+
+        <div>
+          <button
+            type="button"
+            onClick={playSuccessChime}
+            style={{
+              background: 'rgba(2, 132, 199, 0.1)',
+              border: 'none',
+              color: 'var(--sky-700)',
+              padding: '6px 14px',
+              borderRadius: 999,
+              fontSize: 12.5,
+              fontWeight: 700,
+              cursor: 'pointer',
+              marginBottom: 16,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6
+            }}
+          >
+            🔊 ஒலி கேட்க (Play Sound Chime)
+          </button>
+        </div>
 
         <p style={{ fontSize: 14.5, lineHeight: 1.6, marginBottom: 8, color: 'var(--ink-900)' }}>
           குலுக்கல் முறையில் <strong>100 மாணவர்கள் (100 Participants)</strong> தேர்ந்தெடுக்கப்படுவார்கள்.
