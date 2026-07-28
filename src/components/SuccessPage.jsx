@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { getWhatsAppShareUrl, getFormattedLastDate } from '../utils/shareUtils.js'
 
 function playSuccessChime() {
   try {
@@ -41,24 +42,12 @@ export default function SuccessPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const registrationId = location.state?.registrationId
+  const lastDate = getFormattedLastDate(5)
+  const whatsappUrl = getWhatsAppShareUrl(5)
 
   useEffect(() => {
     playSuccessChime()
   }, [])
-
-  const shareMessage =
-`🎉 *மைக்ரோ நோட்ஸ் திறப்பு விழா சிறப்பு சலுகை!*
-
-📚 *School, College, TNPSC, NEET/JEE உள்ளிட்ட Study Guides இலவசம்!*
-
-🎁 பதிவு செய்பவர்களில் இருந்து *குலுக்கல் முறையில் 100 அதிர்ஷ்டசாலிகள்* தேர்வு செய்யப்பட்டு *இலவச Study Guide புத்தகங்கள்* வழங்கப்படும்.
-
-📞 தேர்வு செய்யப்பட்டவர்களை எங்கள் குழு தொடர்புகொள்ளும்.
-
-👉 *இப்போதே பதிவு செய்யுங்கள்:*`
-
-  const shareUrl = 'https://micronotesoffer.vercel.app/'
-  const fullShareText = encodeURIComponent(`${shareMessage}\n${shareUrl}`)
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 20px' }}>
@@ -113,7 +102,10 @@ export default function SuccessPage() {
         <p style={{ fontSize: 14, lineHeight: 1.6, marginBottom: 8, color: 'var(--ink-600)' }}>
           நீங்கள் தேர்ந்தெடுக்கப்பட்டால் எங்கள் குழு உங்களை கைபேசி வழியாக தொடர்பு கொள்ளும்.
         </p>
-        <p style={{ fontSize: 13.5, lineHeight: 1.6, marginBottom: 28, color: 'var(--ink-400)' }}>
+        <div style={{ background: 'rgba(2, 132, 199, 0.08)', border: '1px dashed var(--sky-400)', borderRadius: 12, padding: '8px 12px', margin: '14px 0 20px', fontSize: 13.5, fontWeight: 700, color: 'var(--sky-800)' }}>
+          ⏳ பதிவு செய்ய கடைசி தேதி: <span>{lastDate}</span>
+        </div>
+        <p style={{ fontSize: 13.5, lineHeight: 1.6, marginBottom: 20, color: 'var(--ink-400)' }}>
           இவ்வாய்ப்பை உங்கள் நண்பர்களுடனும் பகிர்ந்து கொள்ளுங்கள்!
         </p>
 
@@ -121,7 +113,7 @@ export default function SuccessPage() {
           <a
             className="btn"
             style={{ background: '#25D366', color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 15 }}
-            href={`https://api.whatsapp.com/send?text=${fullShareText}`}
+            href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
           >
